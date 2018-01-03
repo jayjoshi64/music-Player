@@ -1,7 +1,7 @@
 # music-Player
 music player to practice machine learning by getting suggestions.
 
-### Overview of the idea :###
+### Overview of the idea : ###
 
 A Music player working with libvlc which will generate logs of the music played by the user. by which many suggestions can be generated.
 
