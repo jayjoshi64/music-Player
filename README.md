@@ -15,3 +15,4 @@ the server will collect the log files and will generate suggestions for each son
 
 ### Contributions : ###
 Any little contribution like a small idea or corrections will be a great help.
+- Check issues for concepts and idea behind working of the music player
