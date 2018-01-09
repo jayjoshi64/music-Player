@@ -7,8 +7,9 @@ import sys
 import os
 import user
 import vlc
-from PyQt4 import QtGui, QtCore
 from styles import *
+from listwidget import *
+from PyQt4 import QtGui, QtCore
 
 class Player(QtGui.QMainWindow):
     """A simple Media Player using VLC and Qt
@@ -22,8 +23,9 @@ class Player(QtGui.QMainWindow):
         # creating an empty vlc media player
         self.MediaPlayer = self.Instance.media_player_new()
 
-        self.createUI()
+        self.songmanager = SongManager()
         self.isPaused = False
+        self.createUI()
 
     def createUI(self):
         """Set up the user interface, signals & slots
@@ -39,7 +41,7 @@ class Player(QtGui.QMainWindow):
         self.MySongs.addItem("Artists")
 
 
-        #self.MySongs.itemClicked.connect()
+        self.MySongs.itemClicked.connect(self.mySongsClicked)
 
         # A demo of the list for the GUI. In future, Song suggestions for a user will be in the list.
         self.SurfSong = QtGui.QListWidget()
@@ -48,10 +50,26 @@ class Player(QtGui.QMainWindow):
         self.SurfSong.addItem("Song3")
         self.SurfSong.addItem("Song4")
 
+
+        self.songslist = SongListWidget(self.songmanager,self)
+        self.albumslist = AlbumListWidget(self.songmanager,self)
+        self.artistslist = ArtistListWidget(self.songmanager,self)
+        self.playlist = PlaylistWidget(self.songmanager,self)
+
+        self.songslist.hide()
+        self.albumslist.hide()
+        self.artistslist.hide()
+        self.playlist.hide()
+
+
         #A Vertical layout which holds Mysong and SurfSong widget
         self.MainInterface = QtGui.QVBoxLayout()
         self.MainInterface.addWidget(self.SurfSong)
         self.MainInterface.addWidget(self.MySongs)
+        self.MainInterface.addWidget(self.songslist)
+        self.MainInterface.addWidget(self.albumslist)
+        self.MainInterface.addWidget(self.artistslist)
+        self.MainInterface.addWidget(self.playlist)
 
 
         #Slider to maintain timeline of the song
@@ -139,6 +157,7 @@ class Player(QtGui.QMainWindow):
             self.Timer.start()
             self.isPaused = False
 
+
     def Stop(self):
         """Stop player
         """
@@ -152,7 +171,10 @@ class Player(QtGui.QMainWindow):
                                                      "Open File", user.home)
         if not filename:
             return
+        self.playFile(filename)
 
+
+    def playFile(self,filename):
         # create the media
         self.Media = self.Instance.media_new(unicode(filename))
         # put the media in the media player
@@ -192,6 +214,29 @@ class Player(QtGui.QMainWindow):
                 # "Pause", not the desired behavior of a media player
                 # this will fix it
                 self.Stop()
+
+    def mySongsClicked(self,item):
+
+        print "oops " + str(item.text())
+
+
+        self.MySongs.hide()
+        self.SurfSong.hide()
+
+        if item.text() == "Songs":
+
+            self.songslist.show()
+
+        elif item.text() == "Albums":
+            self.albumslist.show()
+
+        elif item.text() == "Artists":
+            self.artistslist.show()
+
+        elif item.text() == "PlayList":
+            self.playlist.show()
+
+
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)

@@ -14,7 +14,6 @@ class Song:
     - duration (in seconds)
     - count of listening 
 
-
     """
 
     def __init__(self,key,value):
@@ -22,14 +21,13 @@ class Song:
         self.name = key[0]
         self.album = key[1]
         self.artist = key[2]
-
         self.location = value["location"]
         self.duration = value["duration"]
         self.count = value["count"]
         self.taglist = value["tags"]
 
 
- class Album:
+class Album:
 
     """Album class which holds the list of songs in it.!
     
@@ -48,7 +46,7 @@ class Song:
         for eachsongid in value["songsID"]:
             self.songlist[eachsongid] = songpool[eachsongid]
 
- class Playlist:
+class Playlist:
 
     """Playlist class which holds the list of songs in it.!
     
@@ -88,8 +86,9 @@ class Artist:
             self.songlist[eachsongid] = songpool[eachsongid]
 
         self.albumlist = {}
-        for eachalbumid in value["albumsID"]:
-            self.albumlist[eachalbumid] = albumpool[eachalbumid]
+        if "albumsID" in value:
+            for eachalbumid in value["albumsID"]:
+                self.albumlist[eachalbumid] = albumpool[eachalbumid]
 
 
 
@@ -97,22 +96,22 @@ class Artist:
 
 class SongManager:
 
-"""
-variables
-===============
-1. locallist = local form of the json which is in file
+    """
+    variables
+    ===============
+    1. locallist = local form of the json which is in file
 
 
-Methods
-===========
-1. pullList(): fetch list from the file.!
-2. pushList(): store the json in the file.!
-3. getSongs(): get songs from the localist
-4. getAlbums(): get albums from the locallist
-5. getArtist(): get artists from the locallist
-6. getPlaylist(): get playlists from the locallist
+    Methods
+    ===========
+    1. pullList(): fetch list from the file.!
+    2. pushList(): store the json in the file.!
+    3. getSongs(): get songs from the localist
+    4. getAlbums(): get albums from the locallist
+    5. getArtist(): get artists from the locallist
+    6. getPlaylist(): get playlists from the locallist
 
-"""
+    """
     def __init__(self):
 
         self.locallist = None
@@ -139,9 +138,56 @@ Methods
 
 
     def pullList(self):
-        with open("jsonlist.json") as file:
-            self.locallist = json.load(file)
+        # with open("jsonlist.json") as file:
+        #     self.locallist = json.load(file)
         
+        self.locallist = {
+                            "Artists": { 
+
+                                ("Ed Sheeran",): {
+
+                                    "songsID": [("A team","plus","Ed Sheeran")]
+
+                                }
+
+
+                            },
+
+                            "Albums": {
+
+                                ("plus","Ed Sheeran"): {
+
+                                    "songsID": [("A team","plus","Ed Sheeran")]
+
+
+                                }
+
+                            },
+
+                            "Songs": {
+
+                                ("A team","plus","Ed Sheeran"): {
+
+                                    "location" : "",
+                                    "duration" : "",
+                                    "count" : 0,
+                                    "tags" : []
+
+                                }
+
+                            },
+
+                            "Playlists": {
+
+                                
+                            }
+
+
+
+                        }    
+
+
+
     def pushList(self):
 
         with open("jsonlist.json") as file:
@@ -161,7 +207,7 @@ Methods
 
         return self.artistpool
    
-    def getPlaylist(self):
+    def getPlaylists(self):
 
         return self.playlistpool
 
