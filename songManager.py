@@ -143,7 +143,7 @@ class SongManager:
         with open("jsonlist.json","r") as file:
                 
             self.locallist = pickle.load(file)
-
+            #print self.locallist
     def pushList(self):
 
         with open("jsonlist.json","w") as file:
@@ -188,3 +188,9 @@ class SongManager:
 
         self.pushList()
 
+
+if __name__=="__main__":
+
+    sm = SongManager()
+    Son = sm.locallist["Songs"][('A team', 'plus', 'Ed Sheeran')]["location"]
+    print Son

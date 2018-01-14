@@ -9,7 +9,9 @@ import user
 import vlc
 from styles import *
 from listwidget import *
+from songManager import SongManager
 from PyQt4 import QtGui, QtCore
+from songQ import SongQ
 
 class Player(QtGui.QMainWindow):
     """A simple Media Player using VLC and Qt
@@ -26,6 +28,7 @@ class Player(QtGui.QMainWindow):
         self.songmanager = SongManager()
         self.isPaused = False
         self.createUI()
+        self.songQ = SongQ()
 
     def createUI(self):
         """Set up the user interface, signals & slots
@@ -51,10 +54,10 @@ class Player(QtGui.QMainWindow):
         self.SurfSong.addItem("Song4")
 
 
-        self.songslist = SongListWidget(self.songmanager,self)
-        self.albumslist = AlbumListWidget(self.songmanager,self)
-        self.artistslist = ArtistListWidget(self.songmanager,self)
-        self.playlist = PlaylistWidget(self.songmanager,self)
+        self.songslist = SongListWidget(self.songmanager.getSongs(), self)
+        self.albumslist = AlbumListWidget(self.songmanager.getAlbums(), self)
+        self.artistslist = ArtistListWidget(self.songmanager.getArtists(), self)
+        self.playlist = PlaylistWidget(self.songmanager.getPlaylists(), self)
 
         self.songslist.hide()
         self.albumslist.hide()
@@ -150,7 +153,10 @@ class Player(QtGui.QMainWindow):
             self.isPaused = True
         else:
             if self.MediaPlayer.play() == -1:
-                self.OpenFile()
+                song = self.songQ.getSong()
+                self.playFile(song.location)
+                #self.OpenFile()
+                self.PlayPause()
                 return
             self.MediaPlayer.play()
             self.PlayButton.setText("Pause")
@@ -163,6 +169,7 @@ class Player(QtGui.QMainWindow):
         """
         self.MediaPlayer.stop()
         self.PlayButton.setText("Play")
+
 
     def OpenFile(self):
         """Open a media file in a MediaPlayer
