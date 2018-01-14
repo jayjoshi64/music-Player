@@ -1,5 +1,5 @@
 import json
-
+import pickle
 
 class Song:
 
@@ -140,58 +140,14 @@ class SongManager:
     def pullList(self):
         # with open("jsonlist.json") as file:
         #     self.locallist = json.load(file)
-        
-        self.locallist = {
-                            "Artists": { 
-
-                                ("Ed Sheeran",): {
-
-                                    "songsID": [("A team","plus","Ed Sheeran")]
-
-                                }
-
-
-                            },
-
-                            "Albums": {
-
-                                ("plus","Ed Sheeran"): {
-
-                                    "songsID": [("A team","plus","Ed Sheeran")]
-
-
-                                }
-
-                            },
-
-                            "Songs": {
-
-                                ("A team","plus","Ed Sheeran"): {
-
-                                    "location" : "",
-                                    "duration" : "",
-                                    "count" : 0,
-                                    "tags" : []
-
-                                }
-
-                            },
-
-                            "Playlists": {
-
-                                
-                            }
-
-
-
-                        }    
-
-
+        with open("jsonlist.json","r") as file:
+                
+            self.locallist = pickle.load(file)
 
     def pushList(self):
 
-        with open("jsonlist.json") as file:
-            json.dump(self.locallist,file)
+        with open("jsonlist.json","w") as file:
+            pickle.dump(self.locallist,file)
 
     def getSongs(self):
 
