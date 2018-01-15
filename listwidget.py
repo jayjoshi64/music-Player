@@ -139,6 +139,21 @@ class ArtistListWidget(myListWidget):
         self.pool = pool
         self.fillList()
 
+    def listItemClicked(self, item):
+
+        # add Album list to SongQ method
+        # CHANGE THIS to album click method.!!!!!
+
+        self.musicPlayer.songslist.pool = item.container.songlist
+        self.musicPlayer.songslist.fillList()
+
+        self.musicPlayer.albumslist.pool= item.container.albumlist
+        self.musicPlayer.albumslist.fillList()
+        self.hide()
+        self.musicPlayer.songslist.show()
+        self.musicPlayer.albumslist.show()
+
+
 class PlaylistWidget(myListWidget):
 
     """List widget class for playlists
