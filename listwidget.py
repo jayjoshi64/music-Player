@@ -1,6 +1,6 @@
 #from songManager import SongManager
 from PyQt4 import QtGui#, QtCore
-
+import random
 class myListItem(QtGui.QListWidgetItem):
 
     def __init__(self, text, obj, master=None):        
@@ -26,16 +26,17 @@ class myListWidget(QtGui.QListWidget):
         QtGui.QListWidget.__init__(self, master)
         self.itemClicked.connect(self.listItemClicked)
         self.filler = None
+        self.musicPlayer = master
         self.pool = None
 
-    def fillList(self, filler):
+    def fillList(self ):
         """Method to fill the list with item
         """
         self.clear()
-        for each in filler:
+        for each in self.pool:
             self.addItem(myListItem(each[0], self.pool[each], master=self))
 
-    def addToQueue(self, shuffle=False, atEnd=False):
+    def addToQueue(self, listtoadd ,shuffle=False, atEnd=False):
         """<abstract method>
 
         will add song list to the songQ object.! by simply calling the functions of the songQ
@@ -46,9 +47,18 @@ class myListWidget(QtGui.QListWidget):
         :atEnd=False: should the songs added at the end of the songQ.?
         Return: None
         """
-        return
+        
+        if shuffle:
+            random.shuffle(listtoadd)
+            
 
-    def listItemClicked(self):
+
+        if atEnd:
+            self.musicPlayer.songQ.addEnd(listtoadd)
+        else:
+            self.musicPlayer.songQ.addStart(listtoadd)
+
+    def listItemClicked(self, item):
         """<abstract method>
         When a item is clicked in the list.
         :a new list should be shown or the song should be added to the songQ and play :)
@@ -78,16 +88,15 @@ class SongListWidget(myListWidget):
     def __init__(self, pool, master=None):
         myListWidget.__init__(self, master)
         self.pool = pool
-        self.musicPlayer = master
-        self.fillList(self.pool)
+        
+        self.fillList()
 
     def listItemClicked(self, item):
 
-        self.musicPlayer.songQ.addStart([item.container])
+        self.addToQueue([item.container],atEnd=False,shuffle=False)
         self.musicPlayer.PlayPause()
-        #print "Song clicked.!"
-        #print item.text()
-
+        
+    
 class AlbumListWidget(myListWidget):
 
     """List Widget calss for albums
@@ -96,7 +105,28 @@ class AlbumListWidget(myListWidget):
     def __init__(self, pool, master=None):
         myListWidget.__init__(self, master)
         self.pool = pool
-        self.fillList(self.pool)
+        self.fillList()
+
+    def listItemClicked(self, item):
+
+        # add Album list to SongQ method
+        # CHANGE THIS to album click method.!!!!!
+
+        self.musicPlayer.songslist.pool = item.container.songlist
+        self.musicPlayer.songslist.fillList()
+        self.hide()
+        self.musicPlayer.songslist.show()
+
+    def contextMenuEvent(self,item):
+        songlist = []
+        print str(item.container)
+        for eachKey in item.container.songlist:
+
+            songlist.append(item.container.songlist[eachKey])
+
+        print songlist
+        self.addToQueue(songlist,atEnd=False,shuffle=False)
+        self.musicPlayer.PlayPause()
 
 
 class ArtistListWidget(myListWidget):
@@ -107,7 +137,7 @@ class ArtistListWidget(myListWidget):
     def __init__(self, pool, master=None):
         myListWidget.__init__(self, master)
         self.pool = pool
-        self.fillList(self.pool)
+        self.fillList()
 
 class PlaylistWidget(myListWidget):
 
@@ -116,8 +146,18 @@ class PlaylistWidget(myListWidget):
     def __init__(self, pool, master=None):
         myListWidget.__init__(self, master)
         self.pool = pool
-        self.fillList(self.pool)
+        self.fillList()
 
+    
+    def listItemClicked(self, item):
+
+        # add playlist to SongQ method
+        # CHANGE THIS to album click method.!!!!!
+
+        self.musicPlayer.songslist.pool = item.container.songlist
+        self.musicPlayer.songslist.fillList()
+        self.hide()
+        self.musicPlayer.songslist.show()
 
 
 
