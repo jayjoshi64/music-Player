@@ -24,7 +24,7 @@ class myListWidget(QtGui.QListWidget):
 
     def __init__(self, master=None):
         QtGui.QListWidget.__init__(self, master)
-        self.itemClicked.connect(self.listItemClicked)
+        self.itemDoubleClicked.connect(self.listItemClicked)
         self.filler = None
         self.musicPlayer = master
         self.pool = None
@@ -51,14 +51,12 @@ class myListWidget(QtGui.QListWidget):
         if shuffle:
             random.shuffle(listtoadd)
             
-
-
         if atEnd:
             self.musicPlayer.songQ.addEnd(listtoadd)
         else:
             self.musicPlayer.songQ.addStart(listtoadd)
 
-    def listItemClicked(self, item):
+    def listitemClicked(self, item):
         """<abstract method>
         When a item is clicked in the list.
         :a new list should be shown or the song should be added to the songQ and play :)
@@ -78,8 +76,18 @@ class myListWidget(QtGui.QListWidget):
         Add to queue : will add songs to the queue
         Delete : will delete the song or album or artist and apropriate songs. ( confirmation should be there.! )
         """
-        pass
-
+        menu = QtGui.QMenu(self)
+        playAction = menu.addAction("Play")
+        playinShuffleAction = menu.addAction("Play in Shuffle")
+        addToQueueAction = menu.addAction("Add to Queue")
+        delete = menu.addAction("delete")
+        
+        action = menu.exec_(self.mapToGlobal(event.pos()))
+        
+        if action == playAction:
+            print self.currentItem().text()
+        
+       
 class SongListWidget(myListWidget):
 
     """List Widget class for Favourite songs
@@ -96,7 +104,6 @@ class SongListWidget(myListWidget):
         self.addToQueue([item.container],atEnd=False,shuffle=False)
         self.musicPlayer.PlayPause()
         
-    
 class AlbumListWidget(myListWidget):
 
     """List Widget calss for albums
@@ -109,15 +116,13 @@ class AlbumListWidget(myListWidget):
 
     def listItemClicked(self, item):
 
-        # add Album list to SongQ method
-        # CHANGE THIS to album click method.!!!!!
-
+        
         self.musicPlayer.songslist.pool = item.container.songlist
         self.musicPlayer.songslist.fillList()
         self.hide()
         self.musicPlayer.songslist.show()
 
-    def contextMenuEvent(self,item):
+    """ def contextMenuEvent(self,item):
         songlist = []
         print str(item.container)
         for eachKey in item.container.songlist:
@@ -127,7 +132,7 @@ class AlbumListWidget(myListWidget):
         print songlist
         self.addToQueue(songlist,atEnd=False,shuffle=False)
         self.musicPlayer.PlayPause()
-
+    """
 
 class ArtistListWidget(myListWidget):
 

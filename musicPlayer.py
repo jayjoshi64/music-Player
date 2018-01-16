@@ -58,6 +58,7 @@ class Player(QtGui.QMainWindow):
         self.albumslist = AlbumListWidget(self.songmanager.getAlbums(), self)
         self.artistslist = ArtistListWidget(self.songmanager.getArtists(), self)
         self.playlist = PlaylistWidget(self.songmanager.getPlaylists(), self)
+        
 
         self.songslist.hide()
         self.albumslist.hide()
