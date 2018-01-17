@@ -36,6 +36,7 @@ class myListWidget(QtGui.QListWidget):
         for each in self.pool:
             self.addItem(myListItem(each[0], self.pool[each], master=self))
 
+
     def addToQueue(self, listtoadd ,shuffle=False, atEnd=False):
         """<abstract method>
 
@@ -62,7 +63,7 @@ class myListWidget(QtGui.QListWidget):
         :a new list should be shown or the song should be added to the songQ and play :)
         """
 
-        pass
+        return None
 
     def contextMenuEvent(self, event):
         """RightClicked pressed. show a QMenu
@@ -80,12 +81,35 @@ class myListWidget(QtGui.QListWidget):
         playAction = menu.addAction("Play")
         playinShuffleAction = menu.addAction("Play in Shuffle")
         addToQueueAction = menu.addAction("Add to Queue")
-        delete = menu.addAction("delete")
+        deleteAction = menu.addAction("delete")
         
         action = menu.exec_(self.mapToGlobal(event.pos()))
         
         if action == playAction:
-            print self.currentItem().text()
+            theList = self.getList()
+            self.addToQueue(theList,shuffle=False,atEnd=False)
+            self.musicPlayer.Play()
+
+        elif action == playinShuffleAction:
+            theList = self.getList()
+            self.addToQueue(theList,shuffle=True,atEnd=False)
+            self.musicPlayer.Play()
+
+        elif action == addToQueueAction:
+            theList = self.getList()
+            self.addToQueue(theList,shuffle=False,atEnd=True)
+            
+        elif action == deleteAction:
+            print "have to delete this song lol"
+
+    def getList(self):
+        """
+        This method will return a list of names.
+        which can be passed to addToQueue method directly.
+        this method will be called by ContextMenuEvent when play it clicked.!
+        :return:list of songs or albums or artists.!
+        """
+        pass
         
        
 class SongListWidget(myListWidget):
@@ -102,8 +126,13 @@ class SongListWidget(myListWidget):
     def listItemClicked(self, item):
 
         self.addToQueue([item.container],atEnd=False,shuffle=False)
-        self.musicPlayer.PlayPause()
+        self.musicPlayer.Play()
         
+    def getList(self):
+
+        return [self.currentItem().container]
+        
+
 class AlbumListWidget(myListWidget):
 
     """List Widget calss for albums
@@ -122,17 +151,14 @@ class AlbumListWidget(myListWidget):
         self.hide()
         self.musicPlayer.songslist.show()
 
-    """ def contextMenuEvent(self,item):
+    def getList(self):
+        item = self.currentItem()
         songlist = []
-        print str(item.container)
         for eachKey in item.container.songlist:
 
             songlist.append(item.container.songlist[eachKey])
 
-        print songlist
-        self.addToQueue(songlist,atEnd=False,shuffle=False)
-        self.musicPlayer.PlayPause()
-    """
+        return songlist
 
 class ArtistListWidget(myListWidget):
 
@@ -158,6 +184,15 @@ class ArtistListWidget(myListWidget):
         self.musicPlayer.songslist.show()
         self.musicPlayer.albumslist.show()
 
+    def getList(self):
+        item = self.currentItem()
+        songlist = []
+        for eachKey in item.container.songlist:
+
+            songlist.append(item.container.songlist[eachKey])
+
+        return songlist
+
 
 class PlaylistWidget(myListWidget):
 
@@ -180,4 +215,12 @@ class PlaylistWidget(myListWidget):
         self.musicPlayer.songslist.show()
 
 
+    def getList(self):
+        item = self.currentItem()
+        songlist = []
+        for eachKey in item.container.songlist:
+
+            songlist.append(item.container.songlist[eachKey])
+
+        return songlist
 

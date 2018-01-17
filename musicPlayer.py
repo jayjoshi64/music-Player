@@ -154,15 +154,20 @@ class Player(QtGui.QMainWindow):
             self.isPaused = True
         else:
             if self.MediaPlayer.play() == -1:
-                song = self.songQ.getSong()
-                self.playFile(song.location)
-                #self.OpenFile()
-                self.PlayPause()
-                return
+                self.Play()
             self.MediaPlayer.play()
             self.PlayButton.setText("Pause")
             self.Timer.start()
             self.isPaused = False
+
+    def Play(self):
+        self.Stop()
+        song = self.songQ.getSong()
+        self.playFile(song.location)
+        #self.OpenFile()
+        self.PlayPause()
+        return
+            
 
 
     def Stop(self):
